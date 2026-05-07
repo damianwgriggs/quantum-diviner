@@ -7,7 +7,7 @@ const CONFIG = {
     API_KEY: null 
 };
 
-// Bulletproof fallback data for AstroDice to ensure it works even if content.js fails
+// Internal Data for AstroDice (Backup)
 const ASTRODICE_DATA = {
     "planets": [
         { "name": "Sun", "symbol": "☉", "anatomy": "A gold-rimmed circle with a singular, perfect dot.", "meaning": "The core identity and vital life force." },
@@ -103,8 +103,9 @@ async function performDraw(type) {
     const seeds = await getQuantumEntropy(1);
     const seed = seeds[0];
     
+    // Safety check for data load
     if (typeof divination_data === 'undefined') {
-        alert("Divination database is still loading. Please wait a moment.");
+        alert("Divination database is still loading. Please wait a moment and try again.");
         return;
     }
 
@@ -147,19 +148,15 @@ function renderResult(item, isReversed, type) {
 }
 
 async function drawAstroDice() {
-    // Show rolling animation
     Object.values(UI.diceVisuals).forEach(el => el.classList.add('rolling'));
-    
-    // Get 3 seeds at once
     const seeds = await getQuantumEntropy(3);
-    
-    // Stop animation
     Object.values(UI.diceVisuals).forEach(el => el.classList.remove('rolling'));
 
-    // Use ASTRODICE_DATA (local) or divination_data (global)
-    const source = (typeof divination_data !== 'undefined' && divination_data.astrodice) 
-        ? divination_data.astrodice 
-        : ASTRODICE_DATA;
+    // Check for global data, fallback to local
+    let source = ASTRODICE_DATA;
+    if (typeof divination_data !== 'undefined' && divination_data.astrodice) {
+        source = divination_data.astrodice;
+    }
 
     const planet = source.planets[seeds[0] % 12];
     const sign = source.signs[seeds[1] % 12];
