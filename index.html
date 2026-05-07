@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Quantum Diviner</title>
+    <meta name="description" content="Quantum-powered Tarot and Runic divination. High-fidelity traditional wisdom.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1 class="serif">The Quantum Diviner</h1>
+            <p class="subtitle">Divination through Quantum Entropy</p>
+        </header>
+
+        <main id="content-area">
+            <div id="reveal-container" class="hidden">
+                <div id="card-display" class="fade-in">
+                    <!-- Cards/Runes will be injected here -->
+                </div>
+                <button id="reset-button" class="btn-outline">Return to the Archway</button>
+            </div>
+
+            <div id="draw-actions">
+                <div id="tarot-section" class="tab-content active">
+                    <div class="deck-visual tarot"></div>
+                    <button id="draw-tarot" class="btn-primary">Step through the Tarot Archway</button>
+                </div>
+                <div id="runes-section" class="tab-content">
+                    <div class="deck-visual runes"></div>
+                    <button id="draw-rune" class="btn-primary">Reach into the Runic Bag</button>
+                </div>
+            </div>
+        </main>
+
+        <nav id="bottom-nav">
+            <button class="nav-item active" data-target="tarot-section">
+                <span class="icon">🎴</span>
+                <span class="label">Tarot</span>
+            </button>
+            <button class="nav-item" data-target="runes-section">
+                <span class="icon">ᚠ</span>
+                <span class="label">Runes</span>
+            </button>
+        </nav>
+
+        <footer>
+            <p id="entropy-source">Source: Finding Entropy...</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="content.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
