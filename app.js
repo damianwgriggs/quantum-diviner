@@ -17,25 +17,31 @@ const UI = {
     resetBtn: document.getElementById('reset-button'),
     entropyLabel: document.getElementById('entropy-source'),
     drawTarotBtn: document.getElementById('draw-tarot'),
-    drawRuneBtn: document.getElementById('draw-rune')
+    drawRuneBtn: document.getElementById('draw-rune'),
+    drawAstroDiceBtn: document.getElementById('draw-astrodice'),
+    diceVisuals: {
+        planet: document.getElementById('planet-die'),
+        sign: document.getElementById('sign-die'),
+        house: document.getElementById('house-die')
+    }
 };
 
 /**
  * Entropy Engine
  */
-async function getQuantumEntropy() {
+async function getQuantumEntropy(length = 1) {
     try {
-        const response = await fetch(CONFIG.ANU_API_URL, { timeout: 5000 });
+        const response = await fetch(`${CONFIG.ANU_API_URL}&length=${length}`, { timeout: 5000 });
         if (!response.ok) throw new Error('API unreachable');
         const data = await response.json();
         UI.entropyLabel.innerText = "Source: ANU Quantum Random Number Lab";
-        return data.data[0];
+        return data.data;
     } catch (e) {
         console.warn("Quantum API failed, falling back to Web Crypto API.", e);
-        const array = new Uint8Array(1);
+        const array = new Uint8Array(length);
         window.crypto.getRandomValues(array);
         UI.entropyLabel.innerText = "Source: Local Kernel Entropy Pool (SecureRandom)";
-        return array[0];
+        return Array.from(array);
     }
 }
 
@@ -43,7 +49,11 @@ async function getQuantumEntropy() {
  * Draw Logic
  */
 async function performDraw(type) {
-    const seed = await getQuantumEntropy();
+    if (type === 'astrodice') {
+        return drawAstroDice();
+    }
+    const seeds = await getQuantumEntropy(1);
+    const seed = seeds[0];
     const data = type === 'tarot' ? divination_data.tarot : divination_data.runes;
     const maxIndex = data.length;
     
@@ -97,6 +107,78 @@ function renderResult(item, isReversed, type) {
     UI.revealContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
+async function drawAstroDice() {
+    // Show rolling animation
+    Object.values(UI.diceVisuals).forEach(el => el.classList.add('rolling'));
+    
+    const seeds = await getQuantumEntropy(3);
+    
+    // Stop animation
+    Object.values(UI.diceVisuals).forEach(el => el.classList.remove('rolling'));
+
+    const planet = divination_data.astrodice.planets[seeds[0] % 12];
+    const sign = divination_data.astrodice.signs[seeds[1] % 12];
+    const house = divination_data.astrodice.houses[seeds[2] % 12];
+
+    UI.diceVisuals.planet.innerText = planet.symbol;
+    UI.diceVisuals.sign.innerText = sign.symbol;
+    UI.diceVisuals.house.innerText = house.symbol;
+
+    renderAstroResult(planet, sign, house);
+}
+
+function renderAstroResult(planet, sign, house) {
+    UI.drawActions.classList.add('hidden');
+    UI.revealContainer.classList.remove('hidden');
+
+    UI.cardDisplay.innerHTML = `
+        <div class="result-header">
+            <h2 class="result-name serif">Celestial Casting</h2>
+            <span class="result-orientation">AstroDice</span>
+        </div>
+
+        <div class="astro-result-grid">
+            <div class="astro-die-result">
+                <h4>${planet.symbol} ${planet.name}</h4>
+                <div class="result-section">
+                    <h3>Anatomy</h3>
+                    <p>${planet.anatomy}</p>
+                </div>
+                <div class="result-section">
+                    <h3>Meaning</h3>
+                    <p>${planet.meaning}</p>
+                </div>
+            </div>
+
+            <div class="astro-die-result">
+                <h4>${sign.symbol} ${sign.name}</h4>
+                <div class="result-section">
+                    <h3>Anatomy</h3>
+                    <p>${sign.anatomy}</p>
+                </div>
+                <div class="result-section">
+                    <h3>Meaning</h3>
+                    <p>${sign.meaning}</p>
+                </div>
+            </div>
+
+            <div class="astro-die-result">
+                <h4>${house.symbol} ${house.name}</h4>
+                <div class="result-section">
+                    <h3>Anatomy</h3>
+                    <p>${house.anatomy}</p>
+                </div>
+                <div class="result-section">
+                    <h3>Meaning</h3>
+                    <p>${house.meaning}</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    UI.revealContainer.scrollIntoView({ behavior: 'smooth' });
+}
+
 /**
  * Tab Navigation
  */
@@ -125,6 +207,7 @@ function resetUI() {
  */
 UI.drawTarotBtn.addEventListener('click', () => performDraw('tarot'));
 UI.drawRuneBtn.addEventListener('click', () => performDraw('runes'));
+UI.drawAstroDiceBtn.addEventListener('click', () => performDraw('astrodice'));
 UI.resetBtn.addEventListener('click', resetUI);
 
 // Initialize
