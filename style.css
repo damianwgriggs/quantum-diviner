@@ -231,6 +231,75 @@ main {
 .nav-item .icon { font-size: 1.5rem; margin-bottom: 2px; }
 .nav-item .label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
 
+/* AstroDice Styles */
+.dice-visual-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.die-visual {
+    width: 80px;
+    height: 80px;
+    background: var(--bg-card);
+    border: 1px solid var(--acc-gold-low);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--acc-gold);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    position: relative;
+    transition: var(--transition);
+}
+
+.die-visual::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(197, 160, 89, 0.05);
+    border-radius: 8px;
+}
+
+.die-visual.rolling {
+    animation: shake 0.2s infinite;
+}
+
+@keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.astro-result-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.astro-die-result {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--acc-gold);
+    border-radius: 4px;
+}
+
+.astro-die-result h4 {
+    color: var(--acc-gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 /* Footer */
 footer {
     padding: 1rem;
