@@ -3,8 +3,8 @@
  */
 
 const CONFIG = {
-    ANU_API_URL: 'https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8',
-    API_KEY: null // User can fill this if needed
+    ANU_API_URL: 'https://qrng.anu.edu.au/API/jsonI.php?type=uint8',
+    API_KEY: null 
 };
 
 const UI = {
@@ -115,6 +115,12 @@ async function drawAstroDice() {
     
     // Stop animation
     Object.values(UI.diceVisuals).forEach(el => el.classList.remove('rolling'));
+
+    if (!divination_data || !divination_data.astrodice) {
+        console.error("Divination data for AstroDice not found. Please ensure content.js is fully loaded.");
+        alert("The celestial database is still loading or could not be found. Please refresh.");
+        return;
+    }
 
     const planet = divination_data.astrodice.planets[seeds[0] % 12];
     const sign = divination_data.astrodice.signs[seeds[1] % 12];
